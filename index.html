@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nexus Watch Studio — Precision, Worn Daily</title>
+<meta name="description" content="Nexus Watch Studio — a curated house of automatic, smart, and field watches. Built for the wrist you actually use every day.">
+<meta name="theme-color" content="#0b0e11">
+
+<!-- PWA-ready -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+<!-- ============ SKIP LINK ============ -->
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ============ LOADER ============ -->
+<div class="app-loader" id="appLoader" aria-hidden="true">
+  <div class="loader-mark">
+    <svg viewBox="0 0 40 40" width="40" height="40">
+      <circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="2" opacity="0.25"/>
+      <path d="M20 3 A17 17 0 0 1 37 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<!-- ============ NAVIGATION ============ -->
+<header class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a href="#home" class="nav-logo" aria-label="Nexus Watch Studio home">
+      <span class="nav-logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22"><circle cx="12" cy="12" r="9.25" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="12" y1="12" x2="12" y2="6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="12" x2="16" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </span>
+      <span class="nav-logo-text">Nexus<em>Watch</em></span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#collection">Collection</a>
+      <a href="#categories">Categories</a>
+      <a href="#brands">Brands</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#journal">Journal</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="searchToggle" aria-label="Search watches" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="19" height="19"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <button class="icon-btn" id="compareToggle" aria-label="Compare list" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="19" height="19"><path d="M4 6h16M4 12h10M4 18h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        <span class="icon-badge" id="compareBadge" hidden>0</span>
+      </button>
+      <button class="icon-btn" id="favToggle" aria-label="Saved watches" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="19" height="19"><path d="M12 20.2s-7.6-4.6-9.9-9.3C.6 7.1 2.6 3.6 6.2 3.2c2-.2 3.9.8 5.1 2.6a5.9 5.9 0 0 1 4.9-2.6c3.6.4 5.6 3.9 4.1 7.7-2.3 4.7-9.9 9.3-9.9 9.3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        <span class="icon-badge" id="favBadge" hidden>0</span>
+      </button>
+      <button class="icon-btn" id="settingsToggle" aria-label="Settings" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="19" height="19"><circle cx="12" cy="12" r="3.1" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 3v2.4M12 18.6V21M21 12h-2.4M5.4 12H3M18.4 5.6l-1.7 1.7M7.3 16.7l-1.7 1.7M18.4 18.4l-1.7-1.7M7.3 7.3 5.6 5.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+      <button class="menu-btn" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile nav sheet -->
+  <div class="mobile-sheet" id="mobileSheet">
+    <a href="#collection">Collection</a>
+    <a href="#categories">Categories</a>
+    <a href="#brands">Brands</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#journal">Journal</a>
+  </div>
+</header>
+
+<!-- ============ SEARCH OVERLAY ============ -->
+<div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search catalog" hidden>
+  <div class="search-overlay-inner">
+    <div class="search-field">
+      <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <input type="text" id="searchInput" placeholder="Search brand, model, category, or feature…" autocomplete="off" aria-label="Search">
+      <button id="searchClose" class="text-btn" aria-label="Close search">Esc</button>
+    </div>
+    <div class="search-results" id="searchResults"></div>
+  </div>
+</div>
+
+<!-- ============ SETTINGS PANEL ============ -->
+<aside class="side-panel" id="settingsPanel" aria-label="Settings" hidden>
+  <div class="side-panel-head">
+    <h2>Settings</h2>
+    <button class="icon-btn" id="settingsClose" aria-label="Close settings">
+      <svg viewBox="0 0 24 24" width="18" height="18"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+
+  <div class="side-panel-body">
+    <div class="setting-group">
+      <span class="setting-label">Theme</span>
+      <div class="segmented" data-setting="theme">
+        <button data-value="light">Light</button>
+        <button data-value="dark" class="is-active">Dark</button>
+        <button data-value="auto">Auto</button>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <span class="setting-label">Accent color</span>
+      <div class="swatch-row" data-setting="accent">
+        <button class="swatch" data-value="brass" style="--sw:#c9a15c" aria-label="Brass"></button>
+        <button class="swatch is-active" data-value="steel" style="--sw:#6f93b3" aria-label="Steel blue"></button>
+        <button class="swatch" data-value="emerald" style="--sw:#3f9e83" aria-label="Emerald"></button>
+        <button class="swatch" data-value="rosewood" style="--sw:#c06a5c" aria-label="Rosewood"></button>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <span class="setting-label">Card style</span>
+      <div class="segmented" data-setting="cardStyle">
+        <button data-value="framed" class="is-active">Framed</button>
+        <button data-value="minimal">Minimal</button>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <span class="setting-label">Grid view</span>
+      <div class="segmented" data-setting="gridView">
+        <button data-value="grid" class="is-active">Grid</button>
+        <button data-value="list">List</button>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <span class="setting-label">Animation speed</span>
+      <div class="segmented" data-setting="motion">
+        <button data-value="full" class="is-active">Full</button>
+        <button data-value="reduced">Reduced</button>
+        <button data-value="off">Off</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ============ COMPARE DRAWER ============ -->
+<aside class="side-panel" id="comparePanel" aria-label="Compare watches" hidden>
+  <div class="side-panel-head">
+    <h2>Compare <span id="compareCount">(0)</span></h2>
+    <button class="icon-btn" id="compareClose" aria-label="Close compare">
+      <svg viewBox="0 0 24 24" width="18" height="18"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="side-panel-body" id="compareBody">
+    <p class="empty-note">Add up to 3 watches to compare specs side by side.</p>
+  </div>
+</aside>
+
+<!-- ============ FAVORITES DRAWER ============ -->
+<aside class="side-panel" id="favPanel" aria-label="Saved watches" hidden>
+  <div class="side-panel-head">
+    <h2>Saved</h2>
+    <button class="icon-btn" id="favClose" aria-label="Close saved watches">
+      <svg viewBox="0 0 24 24" width="18" height="18"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="side-panel-body" id="favBody">
+    <p class="empty-note">Nothing saved yet. Tap the heart on any watch to keep it here.</p>
+  </div>
+</aside>
+
+<div class="scrim" id="scrim" hidden></div>
+
+<!-- ============ MAIN ============ -->
+<main id="main">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="home">
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-glow hero-glow-a"></div>
+      <div class="hero-glow hero-glow-b"></div>
+      <div class="hero-grid"></div>
+    </div>
+
+    <div class="hero-inner">
+      <div class="hero-copy">
+        <p class="eyebrow">Nexus Watch Studio</p>
+        <h1 class="hero-title">Time, worn<br><em>on purpose.</em></h1>
+        <p class="hero-sub">A small house of automatic, field, and smart watches — built for daily wear, priced without the showroom markup.</p>
+        <div class="hero-cta-row">
+          <a href="#collection" class="btn btn-primary ripple">Shop the collection</a>
+          <a href="#categories" class="btn btn-ghost ripple">Browse by category</a>
+        </div>
+        <div class="hero-stats">
+          <div><strong id="statModels">12</strong><span>Models in stock</span></div>
+          <div><strong>5</strong><span>Year warranty option</span></div>
+          <div><strong>4.6</strong><span>Average rating</span></div>
+        </div>
+      </div>
+
+      <div class="hero-watch" aria-hidden="true">
+        <div class="hero-watch-glass">
+          <svg id="liveWatch" viewBox="0 0 220 220" width="220" height="220">
+            <circle cx="110" cy="110" r="98" fill="#0d1117" stroke="#c9a15c" stroke-width="1.5"/>
+            <circle cx="110" cy="110" r="86" fill="none" stroke="#2a2f36" stroke-width="1"/>
+            <g id="hourMarks" stroke="#e7c27d" stroke-width="2" stroke-linecap="round"></g>
+            <text x="110" y="60" text-anchor="middle" fill="#8f95a0" font-family="Space Mono, monospace" font-size="8" letter-spacing="2">NEXUS</text>
+            <text x="110" y="150" text-anchor="middle" fill="#8f95a0" font-family="Space Mono, monospace" font-size="7" letter-spacing="1">AUTOMATIC</text>
+            <line id="handHour" x1="110" y1="110" x2="110" y2="72" stroke="#f5f3ee" stroke-width="4" stroke-linecap="round"/>
+            <line id="handMinute" x1="110" y1="110" x2="110" y2="52" stroke="#f5f3ee" stroke-width="2.5" stroke-linecap="round"/>
+            <line id="handSecond" x1="110" y1="128" x2="110" y2="46" stroke="#c9a15c" stroke-width="1.2" stroke-linecap="round"/>
+            <circle cx="110" cy="110" r="4.5" fill="#c9a15c"/>
+          </svg>
+        </div>
+        <span class="hero-watch-caption">Live — your local time</span>
+      </div>
+    </div>
+
+    <div class="hero-scroll-cue" aria-hidden="true"><span></span></div>
+  </section>
+
+  <!-- ============ BRAND MARQUEE ============ -->
+  <section class="brand-strip" id="brands" aria-label="Brands we carry">
+    <div class="brand-track">
+      <span>Meridian</span><span>Vantage</span><span>Aurum</span><span>Solace</span>
+      <span>Meridian</span><span>Vantage</span><span>Aurum</span><span>Solace</span>
+    </div>
+  </section>
+
+  <!-- ============ FEATURED ============ -->
+  <section class="section" id="featured">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Featured</p>
+        <h2>This season's picks</h2>
+      </div>
+      <p class="section-note">Hand-picked by our team, updated monthly.</p>
+    </div>
+    <div class="watch-rail" id="featuredRail"></div>
+  </section>
+
+  <!-- ============ CATEGORIES ============ -->
+  <section class="section" id="categories">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Browse</p>
+        <h2>Shop by category</h2>
+      </div>
+    </div>
+    <div class="category-grid" id="categoryGrid"></div>
+  </section>
+
+  <!-- ============ LUXURY BANNER ============ -->
+  <section class="promo-banner">
+    <div class="promo-banner-inner">
+      <p class="eyebrow eyebrow-light">The Solstice Line</p>
+      <h2>A moonphase complication,<br>hand-assembled in-house.</h2>
+      <p>Accurate to within a day after over a century. Four in stock this quarter.</p>
+      <a href="#" class="btn btn-light ripple" data-open-product="mer-solstice-10">View the Solstice</a>
+    </div>
+    <div class="promo-banner-glow" aria-hidden="true"></div>
+  </section>
+
+  <!-- ============ TRENDING / FULL COLLECTION ============ -->
+  <section class="section" id="collection">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Full catalog</p>
+        <h2>Trending collection</h2>
+      </div>
+      <p class="section-note" id="resultCount">12 watches</p>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-scroll" id="categoryChips">
+        <button class="chip is-active" data-filter-category="all">All</button>
+        <button class="chip" data-filter-category="luxury">Luxury</button>
+        <button class="chip" data-filter-category="sport">Sport</button>
+        <button class="chip" data-filter-category="smart">Smart</button>
+        <button class="chip" data-filter-category="minimalist">Minimalist</button>
+        <button class="chip" data-filter-category="diver">Diver</button>
+        <button class="chip" data-filter-category="chronograph">Chronograph</button>
+      </div>
+
+      <div class="filter-controls">
+        <select id="sortSelect" aria-label="Sort by">
+          <option value="best-selling">Best selling</option>
+          <option value="newest">Newest</option>
+          <option value="price-asc">Price: Low to high</option>
+          <option value="price-desc">Price: High to low</option>
+          <option value="rating">Highest rated</option>
+        </select>
+        <button class="filter-toggle" id="filterToggle" aria-expanded="false">
+          <svg viewBox="0 0 24 24" width="16" height="16"><path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Filters
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-expand" id="filterExpand" hidden>
+      <div class="filter-col">
+        <span class="setting-label">Price</span>
+        <div class="range-row">
+          <input type="range" id="priceMax" min="100" max="2200" step="10" value="2200">
+          <output id="priceMaxOut">$2200</output>
+        </div>
+      </div>
+      <div class="filter-col">
+        <span class="setting-label">Minimum rating</span>
+        <div class="segmented" id="ratingFilter">
+          <button data-value="0" class="is-active">Any</button>
+          <button data-value="4">4+</button>
+          <button data-value="4.5">4.5+</button>
+        </div>
+      </div>
+      <div class="filter-col">
+        <span class="setting-label">Show only</span>
+        <div class="segmented" id="specialFilter">
+          <button data-value="none" class="is-active">All</button>
+          <button data-value="new">New</button>
+          <button data-value="bestseller">Best sellers</button>
+          <button data-value="discount">On sale</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="watch-grid" id="watchGrid"></div>
+    <div class="empty-state" id="emptyState" hidden>
+      <p>No watches match those filters.</p>
+      <button class="text-btn" id="clearFilters">Clear all filters</button>
+    </div>
+  </section>
+
+  <!-- ============ REVIEWS ============ -->
+  <section class="section section-tight" id="reviews">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Reviews</p>
+        <h2>What people say after week one</h2>
+      </div>
+    </div>
+    <div class="review-grid">
+      <article class="review-card">
+        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <p>"Wore the Ridgeline through an eleven-hour flight and never touched the crown once I set both hands. That's the whole point of a GMT."</p>
+        <footer><strong>Farhan I.</strong><span>Verified — Ridgeline GMT</span></footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <p>"The Fieldline is thinner than I expected from photos. Genuinely disappears under a shirt cuff, which is exactly what I wanted."</p>
+        <footer><strong>Ren O.</strong><span>Verified — Fieldline 38</span></footer>
+      </article>
+      <article class="review-card">
+        <div class="review-stars" aria-label="4 out of 5 stars">★★★★☆</div>
+        <p>"Battery life on the Nightframe Pro is the real deal — I forget to charge it and it's still fine two days later. Strap could be softer."</p>
+        <footer><strong>Priya K.</strong><span>Verified — Nightframe Pro</span></footer>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ JOURNAL / LATEST ============ -->
+  <section class="section" id="journal">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Just landed</p>
+        <h2>Latest arrivals</h2>
+      </div>
+    </div>
+    <div class="watch-rail" id="newRail"></div>
+  </section>
+
+  <!-- ============ NEWSLETTER ============ -->
+  <section class="newsletter">
+    <div class="newsletter-inner">
+      <h2>Get restock alerts,<br>not spam.</h2>
+      <p>One email when a limited run drops. Nothing else.</p>
+      <form id="newsletterForm" class="newsletter-form">
+        <input type="email" id="newsletterEmail" placeholder="you@email.com" required aria-label="Email address">
+        <button type="submit" class="btn btn-primary ripple">Notify me</button>
+      </form>
+      <p class="newsletter-status" id="newsletterStatus" aria-live="polite"></p>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="nav-logo-text">Nexus<em>Watch</em></span>
+      <p>Designed for the daily wrist. A small studio, honestly priced.</p>
+    </div>
+    <div class="footer-col">
+      <h3>Shop</h3>
+      <a href="#collection">Full collection</a>
+      <a href="#categories">Categories</a>
+      <a href="#brands">Brands</a>
+      <a href="#">Gift cards</a>
+    </div>
+    <div class="footer-col">
+      <h3>Support</h3>
+      <a href="#">Shipping &amp; returns</a>
+      <a href="#">Warranty registration</a>
+      <a href="#">Size guide</a>
+      <a href="#">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h3>Studio</h3>
+      <a href="#">About Nexus</a>
+      <a href="#journal">Journal</a>
+      <a href="#">Careers</a>
+      <a href="#">Wholesale</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© <span id="footerYear"></span> Nexus Watch Studio. All rights reserved.</p>
+    <div class="footer-legal">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ============ PRODUCT DETAIL MODAL ============ -->
+<div class="modal-overlay" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="modal-panel">
+    <button class="icon-btn modal-close" id="modalClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="18" height="18"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="modal-body" id="modalBody"><!-- injected --></div>
+  </div>
+</div>
+
+<!-- ============ TOASTS ============ -->
+<div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
