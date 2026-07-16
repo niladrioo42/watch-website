@@ -4,7 +4,8 @@
  * Sections:
  *   1. Storage helpers (safe localStorage wrapper)
  *   2. State
- *   3. SVG watch-face renderer (shared by cards, rails, modal)
+ *   3. SVG watch-face renderer (fallback for products with no photo)
+ *   3b. watchMediaHTML — prefers real product photos, falls back to SVG
  *   4. Card / list templates
  *   5. Render pipeline (filter -> sort -> paint)
  *   6. Product modal
@@ -56,7 +57,7 @@ const State = {
   filters: {
     category: "all",
     query: "",
-    priceMax: 2200,
+    priceMax: 3200,
     minRating: 0,
     special: "none",
     sort: "best-selling"
@@ -64,11 +65,17 @@ const State = {
 };
 
 /* ================= 3. SVG WATCH-FACE RENDERER =================
-   Every watch is rendered as a vector dial using its own `dial`
-   color tokens from data.js — no external image requests, so the
-   catalog stays fast on slow mobile connections and never shows
-   broken image icons.
+   Fallback only — used when a product has no `image` field.
+   Renders a vector dial using its own `dial` color tokens from
+   data.js, so the catalog never shows a broken image icon.
 ------------------------------------------------------------- */
+function watchMediaHTML(watch, size = 200) {
+  if (watch.image) {
+    return `<img src="${watch.image}" alt="${watch.brand} ${watch.model}" loading="lazy" width="${size}" height="${size}">`;
+  }
+  return renderWatchSVG(watch, size);
+}
+
 function renderWatchSVG(watch, size = 200) {
   const { face, hands, marker, accent } = watch.dial;
   const marks = Array.from({ length: 12 }).map((_, i) => {
@@ -115,7 +122,7 @@ function watchCardHTML(w) {
       <button class="card-fav ${isFav ? "is-active" : ""}" data-action="toggle-fav" data-id="${w.id}" aria-label="Save ${w.model}" aria-pressed="${isFav}">
         <svg viewBox="0 0 24 24" width="18" height="18"><path d="M12 20.2s-7.6-4.6-9.9-9.3C.6 7.1 2.6 3.6 6.2 3.2c2-.2 3.9.8 5.1 2.6a5.9 5.9 0 0 1 4.9-2.6c3.6.4 5.6 3.9 4.1 7.7-2.3 4.7-9.9 9.3-9.9 9.3z" fill="${isFav ? "currentColor" : "none"}" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
       </button>
-      ${renderWatchSVG(w)}
+      ${watchMediaHTML(w)}
     </div>
     <div class="card-body">
       <span class="card-brand">${w.brand}</span>
@@ -209,7 +216,6 @@ function renderCategoryGrid() {
   const cats = [
     { id: "luxury", label: "Luxury", note: "Automatic, gold-toned" },
     { id: "sport", label: "Sport", note: "GMT, field, titanium" },
-    { id: "smart", label: "Smart", note: "AMOLED, hybrid" },
     { id: "minimalist", label: "Minimalist", note: "Clean dial, everyday" },
     { id: "diver", label: "Diver", note: "ISO rated, 300m+" },
     { id: "chronograph", label: "Chronograph", note: "Racing, tachymeter" }
@@ -229,7 +235,6 @@ function updateStatModels() {
   const el = document.getElementById("statModels");
   if (el) el.textContent = State.catalog.length;
 }
-
 /* ================= 6. PRODUCT MODAL ================= */
 function specRow(label, value) {
   return `<tr><th>${label}</th><td>${value}</td></tr>`;
@@ -247,9 +252,9 @@ function openProductModal(id) {
   body.innerHTML = `
     <div class="modal-grid">
       <div>
-        <div class="modal-gallery-main">${renderWatchSVG(w)}</div>
+        <div class="modal-gallery-main">${watchMediaHTML(w)}</div>
         <div class="modal-gallery-thumbs">
-          ${[0, 1, 2].map((i) => `<button class="${i === 0 ? "is-active" : ""}" data-thumb="${i}">${renderWatchSVG(w, 60)}</button>`).join("")}
+          ${[0, 1, 2].map((i) => `<button class="${i === 0 ? "is-active" : ""}" data-thumb="${i}">${watchMediaHTML(w, 60)}</button>`).join("")}
         </div>
       </div>
       <div class="modal-info">
@@ -325,7 +330,7 @@ function renderFavPanel() {
   }
   body.innerHTML = items.map((w) => `
     <div class="mini-row">
-      ${renderWatchSVG(w, 40)}
+      ${watchMediaHTML(w, 40)}
       <div class="mr-info">
         <strong>${w.brand} ${w.model}</strong>
         <span>${priceFmt(w.price)}</span>
@@ -377,7 +382,7 @@ function renderComparePanel() {
 
   const list = items.map((w) => `
     <div class="compare-item">
-      ${renderWatchSVG(w, 44)}
+      ${watchMediaHTML(w, 44)}
       <div class="ci-info"><strong>${w.brand} ${w.model}</strong><span>${priceFmt(w.price)}</span></div>
       <button class="icon-btn mr-remove" data-action="toggle-compare" data-id="${w.id}" aria-label="Remove ${w.model}">
         <svg viewBox="0 0 24 24" width="16" height="16"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -432,7 +437,7 @@ function runSearch(query) {
 
   results.innerHTML = matches.map((w) => `
     <button class="mini-row" data-action="view" data-id="${w.id}" style="width:100%;text-align:left;">
-      ${renderWatchSVG(w, 40)}
+      ${watchMediaHTML(w, 40)}
       <div class="mr-info">
         <strong>${w.brand} ${w.model}</strong>
         <span>${w.category} · ${priceFmt(w.price)}</span>
@@ -608,12 +613,12 @@ function attachDelegatedEvents() {
     }
 
     if (e.target.closest("#clearFilters")) {
-      State.filters = { ...State.filters, category: "all", query: "", priceMax: 2200, minRating: 0, special: "none" };
+      State.filters = { ...State.filters, category: "all", query: "", priceMax: 3200, minRating: 0, special: "none" };
       document.querySelectorAll("[data-filter-category]").forEach((c) => c.classList.toggle("is-active", c.dataset.filterCategory === "all"));
       document.querySelectorAll("#ratingFilter button").forEach((b, i) => b.classList.toggle("is-active", i === 0));
       document.querySelectorAll("#specialFilter button").forEach((b, i) => b.classList.toggle("is-active", i === 0));
-      document.getElementById("priceMax").value = 2200;
-      document.getElementById("priceMaxOut").textContent = "$2200";
+      document.getElementById("priceMax").value = 3200;
+      document.getElementById("priceMaxOut").textContent = "$3200";
       renderGrid();
     }
   });
