@@ -1,5 +1,5 @@
 /**
- * NEXUS WATCH STUDIO — APPLICATION LOGIC
+ * AUREX WATCH STUDIO — APPLICATION LOGIC
  * ------------------------------------------------------------
  * Sections:
  *   1. Storage helpers (safe localStorage wrapper)
