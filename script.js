@@ -362,7 +362,6 @@ function toggleFavorite(id) {
     });
   }
 }
-}
 
 function renderFavPanel() {
   const body = document.getElementById("favBody");
