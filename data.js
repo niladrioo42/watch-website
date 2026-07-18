@@ -1,5 +1,5 @@
 /**
- * NEXUS WATCH STUDIO — PRODUCT DATA MODULE
+ * AUREX WATCH STUDIO — PRODUCT DATA MODULE
  * ------------------------------------------------------------
  * This file is the single source of truth for catalog data.
  * It is intentionally decoupled from rendering logic (script.js)
