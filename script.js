@@ -205,11 +205,13 @@ function renderGrid() {
   }
   empty.hidden = true;
   grid.innerHTML = list.map(watchCardHTML).join("");
+  requestAnimationFrame(() => initScrollReveal(".watch-card"));
 }
 
 function renderRail(containerId, items) {
   const rail = document.getElementById(containerId);
   rail.innerHTML = items.map(watchCardHTML).join("");
+  requestAnimationFrame(() => initScrollReveal(".watch-card"));
 }
 
 function renderCategoryGrid() {
@@ -229,11 +231,37 @@ function renderCategoryGrid() {
       <h3>${c.label}</h3>
       <span>${c.note}</span>
     </button>`).join("");
+  requestAnimationFrame(() => initScrollReveal(".category-tile"));
 }
 
 function updateStatModels() {
   const el = document.getElementById("statModels");
   if (el) el.textContent = State.catalog.length;
+}
+/* ================= 5b. SCROLL REVEAL =================
+   Staggers a fade/rise-in as elements enter the viewport.
+   Safe no-op fallback if IntersectionObserver is unsupported.
+------------------------------------------------------------- */
+function initScrollReveal(selector) {
+  const els = document.querySelectorAll(`${selector}:not(.in-view)`);
+  if (!els.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    els.forEach((el) => el.classList.add("in-view"));
+    return;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      const i = Array.prototype.indexOf.call(els, entry.target);
+      entry.target.style.transitionDelay = `${(i % 4) * 70}ms`;
+      entry.target.classList.add("in-view");
+      io.unobserve(entry.target);
+    });
+  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+
+  els.forEach((el) => io.observe(el));
 }
 /* ================= 6. PRODUCT MODAL ================= */
 function specRow(label, value) {
@@ -732,6 +760,7 @@ async function init() {
   renderFavPanel();
   renderComparePanel();
   syncBadges();
+  initScrollReveal(".review-card");
 
   const loader = document.getElementById("appLoader");
   setTimeout(() => loader.classList.add("is-hidden"), 350);
