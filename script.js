@@ -280,7 +280,12 @@ function openProductModal(id) {
   body.innerHTML = `
     <div class="modal-grid">
       <div>
-        <div class="modal-gallery-main">${watchMediaHTML(w)}</div>
+        <div class="modal-gallery-main" id="modalGalleryMain">${watchMediaHTML(w)}
+          <span class="modal-gallery-hint">
+            <svg viewBox="0 0 24 24" width="13" height="13"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="1.8"/><line x1="16.2" y1="16.2" x2="21" y2="21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><line x1="11" y1="8.5" x2="11" y2="13.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="8.5" y1="11" x2="13.5" y2="11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Tap to zoom
+          </span>
+        </div>
         <div class="modal-gallery-thumbs">
           ${[0, 1, 2].map((i) => `<button class="${i === 0 ? "is-active" : ""}" data-thumb="${i}">${watchMediaHTML(w, 60)}</button>`).join("")}
         </div>
@@ -661,6 +666,19 @@ function attachDelegatedEvents() {
     if (thumb) {
       thumb.parentElement.querySelectorAll("button").forEach((b) => b.classList.remove("is-active"));
       thumb.classList.add("is-active");
+    }
+
+    const gallery = e.target.closest("#modalGalleryMain");
+    if (gallery) {
+      const isZoomed = gallery.classList.contains("is-zoomed");
+      if (!isZoomed) {
+        const rect = gallery.getBoundingClientRect();
+        const originX = ((e.clientX - rect.left) / rect.width) * 100;
+        const originY = ((e.clientY - rect.top) / rect.height) * 100;
+        const img = gallery.querySelector("img");
+        if (img) img.style.transformOrigin = `${originX}% ${originY}%`;
+      }
+      gallery.classList.toggle("is-zoomed");
     }
   });
 
