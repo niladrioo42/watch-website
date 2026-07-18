@@ -344,6 +344,7 @@ function closeProductModal() {
 function toggleFavorite(id) {
   if (State.favorites.has(id)) State.favorites.delete(id);
   else State.favorites.add(id);
+  const justAdded = State.favorites.has(id);
   Store.set("nx_favorites", [...State.favorites]);
   syncBadges();
   renderGrid();
@@ -352,6 +353,15 @@ function toggleFavorite(id) {
   refreshRails();
   const w = State.catalog.find((x) => x.id === id);
   if (w) showToast(State.favorites.has(id) ? `Saved ${w.model}` : `Removed ${w.model}`);
+  if (justAdded) {
+    requestAnimationFrame(() => {
+      document.querySelectorAll(`[data-action="toggle-fav"][data-id="${id}"]`).forEach((btn) => {
+        btn.classList.add("is-pulsing");
+        setTimeout(() => btn.classList.remove("is-pulsing"), 550);
+      });
+    });
+  }
+}
 }
 
 function renderFavPanel() {
@@ -587,7 +597,11 @@ function attachDelegatedEvents() {
       if (action === "view") openProductModal(id);
       if (action === "toggle-fav") toggleFavorite(id);
       if (action === "toggle-compare") toggleCompare(id);
-      if (action === "buy") showToast("Added to cart — checkout coming soon");
+      if (action === "buy") {
+        actionEl.classList.add("is-confirmed");
+        setTimeout(() => actionEl.classList.remove("is-confirmed"), 900);
+        showToast("Added to cart — checkout coming soon");
+      }
       if (action === "share") {
         if (navigator.share) {
           navigator.share({ title: "Nexus Watch Studio", text: "Check out this watch", url: location.href }).catch(() => {});
